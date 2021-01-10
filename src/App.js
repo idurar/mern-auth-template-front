@@ -6,6 +6,7 @@ import Home from "./components/pages/Home";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import UserContext from "./context/UserContext";
+import PrivateRoute from "./utils/PrivateRoute";
 
 import "./style.css";
 
@@ -15,31 +16,31 @@ export default function App() {
     user: undefined,
   });
 
-  useEffect(() => {
-    const checkLoggedIn = async () => {
-      let token = localStorage.getItem("auth-token");
-      if (token === null) {
-        localStorage.setItem("auth-token", "");
-        token = "";
-      }
-      const tokenRes = await Axios.post(
-        "http://localhost:5000/users/tokenIsValid",
-        null,
-        { headers: { "x-auth-token": token } }
-      );
-      if (tokenRes.data) {
-        const userRes = await Axios.get("http://localhost:5000/users/", {
-          headers: { "x-auth-token": token },
-        });
-        setUserData({
-          token,
-          user: userRes.data,
-        });
-      }
-    };
+  // useEffect(() => {
+  //   const checkLoggedIn = async () => {
+  //     let token = localStorage.getItem("auth-token");
+  //     if (token === null) {
+  //       localStorage.setItem("auth-token", "");
+  //       token = "";
+  //     }
+  //     const tokenRes = await Axios.post(
+  //       "http://localhost:5000/users/tokenIsValid",
+  //       null,
+  //       { headers: { "x-auth-token": token } }
+  //     );
+  //     if (tokenRes.data) {
+  //       const userRes = await Axios.get("http://localhost:5000/users/", {
+  //         headers: { "x-auth-token": token },
+  //       });
+  //       setUserData({
+  //         token,
+  //         user: userRes.data,
+  //       });
+  //     }
+  //   };
 
-    checkLoggedIn();
-  }, []);
+  //   checkLoggedIn();
+  // }, []);
 
   return (
     <>
@@ -48,7 +49,7 @@ export default function App() {
           <Header />
           <div className="container">
             <Switch>
-              <Route exact path="/" component={Home} />
+              <PrivateRoute component={Home} path="/" exact />
               <Route path="/login" component={Login} />
               <Route path="/register" component={Register} />
             </Switch>

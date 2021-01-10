@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import UserContext from "../../context/UserContext";
 import Axios from "axios";
 import ErrorNotice from "../misc/ErrorNotice";
+import { API_BASE_URL, ACCESS_TOKEN_NAME } from "../../config/serverApiConfig";
 
 export default function Login() {
   const [email, setEmail] = useState();
@@ -16,18 +17,16 @@ export default function Login() {
     e.preventDefault();
     try {
       const loginUser = { email, password };
-      const loginRes = await Axios.post(
-        "http://localhost:5000/users/login",
-        loginUser
-      );
+      const loginRes = await Axios.post(API_BASE_URL + `login`, loginUser);
       setUserData({
         token: loginRes.data.token,
         user: loginRes.data.user,
       });
-      localStorage.setItem("auth-token", loginRes.data.token);
+      localStorage.setItem(ACCESS_TOKEN_NAME, loginRes.data.token);
       history.push("/");
     } catch (err) {
-      err.response.data.msg && setError(err.response.data.msg);
+      console.log(err.response.data);
+      err.response.data.error && setError(err.response.data.error);
     }
   };
   return (

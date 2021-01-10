@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import UserContext from "../../context/UserContext";
 import Axios from "axios";
 import ErrorNotice from "../misc/ErrorNotice";
+import { API_BASE_URL, ACCESS_TOKEN_NAME } from "../../config/serverApiConfig";
 
 export default function Register() {
   const [email, setEmail] = useState();
@@ -19,8 +20,8 @@ export default function Register() {
 
     try {
       const newUser = { email, password, passwordCheck, displayName };
-      await Axios.post("http://localhost:5000/users/register", newUser);
-      const loginRes = await Axios.post("http://localhost:5000/users/login", {
+      await Axios.post(API_BASE_URL + `register`, newUser);
+      const loginRes = await Axios.post(API_BASE_URL + `login`, {
         email,
         password,
       });
@@ -28,7 +29,7 @@ export default function Register() {
         token: loginRes.data.token,
         user: loginRes.data.user,
       });
-      localStorage.setItem("auth-token", loginRes.data.token);
+      localStorage.setItem(ACCESS_TOKEN_NAME, loginRes.data.token);
       history.push("/");
     } catch (err) {
       err.response.data.msg && setError(err.response.data.msg);
